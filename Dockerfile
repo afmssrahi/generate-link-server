@@ -1,14 +1,14 @@
 # Use an official Node runtime as a parent image
-FROM node:14
+FROM node:16
 
 # Set the working directory in the container
 WORKDIR /usr/src/app
 
-# Copy package.json and yarn.lock to the working directory
-COPY package.json yarn.lock ./
+# Copy package.json and package-lock.json to the working directory
+COPY package.json package-lock.json ./
 
 # Install any needed packages
-RUN yarn install --frozen-lockfile
+RUN npm install
 
 # Copy the rest of the application to the working directory
 COPY . .
@@ -21,3 +21,4 @@ ENV NODE_ENV=production
 
 # Run the app when the container launches
 CMD ["node", "src/app.js"]
+
