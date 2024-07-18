@@ -5,7 +5,7 @@ const collectionName = 'links';
 
 const createLink = async (userId, name, upi_id, amount, linkId) => {
 	const db = getDB();
-	const expirationTime = new Date(Date.now() + 3 * 60 * 1000); // Set expiration time to 3 minutes from now
+	const expirationTime = new Date(Date.now() + 30 * 60 * 1000); // Set expiration time to 3 minutes from now
 	const result = await db.collection(collectionName).insertOne({
 		userId: new ObjectId(userId),
 		name,
