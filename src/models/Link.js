@@ -1,32 +1,63 @@
-const { getDB } = require('../db');
-const { ObjectId } = require('mongodb');
+const mongoose = require('mongoose');
 
-const collectionName = 'links';
+const linkSchema = new mongoose.Schema({
+	userId: {
+		type: mongoose.Schema.Types.ObjectId,
+		required: true,
+		ref: 'User',
+	},
+	name: {
+		type: String,
+		required: true,
+	},
+	upi_id: {
+		type: String,
+		required: true,
+	},
+	amount: {
+		type: Number,
+		required: true,
+	},
+	linkId: {
+		type: String,
+		required: true,
+		unique: true,
+	},
+	createdAt: {
+		type: Date,
+		default: Date.now,
+	},
+	expirationTime: {
+		type: Date,
+		required: true,
+	},
+});
+
+const Link = mongoose.model('Link', linkSchema);
 
 const createLink = async (userId, name, upi_id, amount, linkId) => {
-	const db = getDB();
 	const expirationTime = new Date(Date.now() + 30 * 60 * 1000); // Set expiration time to 3 minutes from now
-	const result = await db.collection(collectionName).insertOne({
-		userId: new ObjectId(userId),
+	const link = new Link({
+		userId,
 		name,
 		upi_id,
 		amount,
 		linkId,
-		createdAt: new Date(),
 		expirationTime,
 	});
-	return result;
+	await link.save();
+	return link;
 };
 
 const findLinkById = async (linkId) => {
-	const db = getDB();
-	const link = await db.collection(collectionName).findOne({ linkId });
+	const link = await Link.findOne({ linkId });
 
 	if (!link) return null;
 
 	const currentTime = new Date();
 	if (currentTime > link.expirationTime) {
-		// await deleteLinkById(linkId); // Optionally delete expired links
+		// Optionally delete expired links
+		// await link.remove();
 		return null;
 	}
 
@@ -34,8 +65,7 @@ const findLinkById = async (linkId) => {
 };
 
 const deleteLinkById = async (linkId) => {
-	const db = getDB();
-	return await db.collection(collectionName).deleteOne({ linkId });
+	return await Link.deleteOne({ linkId });
 };
 
 module.exports = { createLink, findLinkById, deleteLinkById };
