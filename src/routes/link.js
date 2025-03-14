@@ -4,6 +4,11 @@ const { v4: uuidv4 } = require('uuid');
 const { createLink, findLinkById, deleteLinkById } = require('../models/Link');
 const auth = require('../middleware/auth');
 
+router.get('/health2', (req, res) => {
+	console.log('Health check 2');
+	res.status(200).json({ status: 'UP', message: 'Server is running' });
+});
+
 // Generate Link
 router.post('/generate', auth, async (req, res) => {
 	const { name, upi_id, amount } = req.body;

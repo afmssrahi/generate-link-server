@@ -7,6 +7,7 @@ const auth = require('../middleware/auth');
 
 // Register a new user
 router.post('/register', async (req, res) => {
+	console.log('====================== Register ======================');
 	const { email, password } = req.body;
 	try {
 		const existingUser = await findUserByEmail(email);
@@ -14,6 +15,8 @@ router.post('/register', async (req, res) => {
 			return res.status(400).json({ msg: 'User already exists' });
 
 		const user = await createUser(email, password);
+
+		console.log(user, 'user created');
 		res.json(user);
 	} catch (err) {
 		res.status(500).json({ msg: 'Server error from register route' });
